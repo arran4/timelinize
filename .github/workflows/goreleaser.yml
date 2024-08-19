@@ -70,6 +70,7 @@ jobs:
       # Installed heif version must match the version requested by go otherwise you get C. errors.
       # As writing jammy (22.04) uses 1.17.6 https://launchpad.net/~strukturag/+archive/ubuntu/libheif
       - name: Downgrade heif on linux to match ppa version
+        if: matrix.os == 'ubuntu'
         run: go get github.com/strukturag/libheif@v1.17.6
 
       - name: Test
