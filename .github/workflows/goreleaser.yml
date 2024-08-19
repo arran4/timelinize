@@ -48,7 +48,8 @@ jobs:
           sudo add-apt-repository ppa:strukturag/libheif
           sudo add-apt-repository ppa:strukturag/libde265
           sudo apt-get update
-          sudo apt-get install -y libheif-dev libvips-dev
+          sudo apt-get install -y libheif-dev libvips-dev 
+          sudo ldconfig
 
       - name: Install libraries (macOS)
         if: matrix.os == 'macos'
@@ -64,6 +65,7 @@ jobs:
 
       - name: Test
         run: go test ./...
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:
