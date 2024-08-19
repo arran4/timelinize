@@ -71,7 +71,7 @@ jobs:
         run: echo "D:\a\_temp\msys64\mingw64\bin" >> $GITHUB_PATH
 
       - name: Download dependencies
-        run: go mod tidy
+        run: go mod download
 
       # Installed heif version must match the version requested by go otherwise you get C. errors.
       # As writing jammy (22.04) uses 1.17.6 https://launchpad.net/~strukturag/+archive/ubuntu/libheif
