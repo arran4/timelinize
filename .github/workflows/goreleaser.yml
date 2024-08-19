@@ -71,7 +71,9 @@ jobs:
       # As writing jammy (22.04) uses 1.17.6 https://launchpad.net/~strukturag/+archive/ubuntu/libheif
       - name: Downgrade heif on linux to match ppa version
         if: matrix.os == 'ubuntu'
-        run: go get github.com/strukturag/libheif@v1.17.6
+        run: | 
+          go get github.com/strukturag/libheif@v1.17.6
+          git add . && git commit --amend --no-edit
 
       - name: Test
         run: go test ./...
