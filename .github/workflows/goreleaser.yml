@@ -79,6 +79,7 @@ jobs:
         if: matrix.os == 'ubuntu'
         run: | 
           go get github.com/strukturag/libheif@v1.17.6
+          # Sadly this breaks the compiled in git sha left via goreleaser
           git add . && git commit --amend --no-edit
           git tag -f "${{  github.ref_name }}"
 
