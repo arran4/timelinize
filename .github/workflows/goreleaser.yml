@@ -80,6 +80,7 @@ jobs:
         run: | 
           go get github.com/strukturag/libheif@v1.17.6
           git add . && git commit --amend --no-edit
+          git tag -f "${{  github.ref_name }}"
 
       - name: Test
         run: go test ./...
