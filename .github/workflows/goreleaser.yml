@@ -64,10 +64,13 @@ jobs:
         run: echo "D:\a\_temp\msys64\mingw64\bin" >> $GITHUB_PATH
 
 
-      # Installed heif version must match the version requested by go otherwise you get C. errors.
-      # As writing jammy (22.04) uses 1.17.6 https://launchpad.net/~strukturag/+archive/ubuntu/libheif
       - name: Download dependencies
         run: go mod tidy
+
+      # Installed heif version must match the version requested by go otherwise you get C. errors.
+      # As writing jammy (22.04) uses 1.17.6 https://launchpad.net/~strukturag/+archive/ubuntu/libheif
+      - name: Downgrade heif on linux to match ppa version
+        run: go get github.com/strukturag/libheif@v1.17.6
 
       - name: Test
         run: go test ./...
