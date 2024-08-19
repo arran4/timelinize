@@ -95,11 +95,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v6
+      # Typically we would use goreleaser to do this too, however, goreleaser pro is required
+      # to use goreleaser to release when using --single-target.
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          distribution: goreleaser
-          version: latest
-          args: release
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/**/*
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
