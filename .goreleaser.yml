@@ -1,4 +1,5 @@
 project_name: timelinize
+version: 2
 builds:
   -
     id: "timelinize"
@@ -11,10 +12,6 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
-checksum:
-  name_template: 'checksums.txt'
-snapshot:
-  name_template: "{{ .Tag }}-next"
 changelog:
   sort: asc
   filters:
@@ -25,7 +22,7 @@ nfpms:
   -
     vendor:  Matt Holt
     homepage: https://matt.life/
-    maintainer: Matt Holt <changeme@example.com>
+    maintainer: 'Matt Holt <changeme@example.com>'
     description: NA
     license: Private
     formats:
