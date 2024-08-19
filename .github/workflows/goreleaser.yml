@@ -20,11 +20,18 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Set up Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
       - name: Install Go
         uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
           check-latest: true
+
       # TODO: The Windows Server 2022 runner apparently comes with msys2 installed
       # but I haven't looked into using it. We'd have to install the packages using
       # its shell, but I'm not sure how to do that.
@@ -62,7 +69,6 @@ jobs:
         if: matrix.os == 'windows'
         shell: bash
         run: echo "D:\a\_temp\msys64\mingw64\bin" >> $GITHUB_PATH
-
 
       - name: Download dependencies
         run: go mod tidy
