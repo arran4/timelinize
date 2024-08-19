@@ -1,0 +1,74 @@
+name: goreleaser
+
+permissions:
+    contents: write
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  goreleaser:
+    strategy:
+      matrix:
+        os: [ubuntu, windows, macos]
+        go-version: [1.23.x]
+    runs-on: ${{ matrix.os }}-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+          check-latest: true
+      # TODO: The Windows Server 2022 runner apparently comes with msys2 installed
+      # but I haven't looked into using it. We'd have to install the packages using
+      # its shell, but I'm not sure how to do that.
+      - name: Install MSYS2 (Windows)
+        if: matrix.os == 'windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          # TODO: Enable this for more current packages, I guess? But it takes longer.
+          # update: true
+          install: >-
+            base-devel
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-libvips
+            mingw-w64-x86_64-libheif
+
+      - name: Install libraries (Linux)
+        if: matrix.os == 'ubuntu'
+        # install libheif (and dependency libde265) from the PPA which is more
+        # current; Ubuntu's is too old, resulting in failed compilation
+        run: |
+          sudo add-apt-repository ppa:strukturag/libheif
+          sudo add-apt-repository ppa:strukturag/libde265
+          sudo apt-get update
+          sudo apt-get install -y libheif-dev libvips-dev
+
+      - name: Install libraries (macOS)
+        if: matrix.os == 'macos'
+        run: brew install libheif vips
+
+      # It is crucial to use our gcc compiler instead of the preinstalled gcc,
+      # which has an MSYS2 path at c:\msys64. The MSYS2 we installed is at d:\a.
+      # (Setting `CC` env var is not enough! You MUST *prepend* the PATH env var!)
+      - name: Update PATH (Windows)
+        if: matrix.os == 'windows'
+        shell: bash
+        run: echo "D:\a\_temp\msys64\mingw64\bin" >> $GITHUB_PATH
+
+      - name: Test
+        run: go test ./...
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --clean --single-target
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
